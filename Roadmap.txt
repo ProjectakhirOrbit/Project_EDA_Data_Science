@@ -1,1 +1,4 @@
 Hal - Hal yang mau Dikerjakan untuk Proyek Akhir
+1. Mencari dataset
+2. Memvisualisasikan dataset
+3. Memakai streamlit
