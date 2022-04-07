@@ -25,9 +25,25 @@ df = load_data()
 
 state_select = st.sidebar.selectbox('Select a Country', df['Entity'].unique())
 selected_state = df[df['Entity'] == state_select]
-visualization = st.sidebar.selectbox('Select Year ' , df['Year'].sort_values(ascending=True))
 
+def test_asc():
+    visualization1 = df['Year'].sort_values(ascending=True)
+    visualization2 = list(set(visualization1))
+    visualization3 = st.sidebar.selectbox('Select Year ' , visualization2)
+    return visualization3
+
+visualization3 = test_asc()
+selected_year = df[df['Year'] == visualization3]
+
+
+st.markdown("select by Year")
+st.write(selected_year)
+
+
+st.markdown("select by State")
 st.write(selected_state)
+
+
 #bar_chart = px.bar(df , x='Death Numbers', y= selected_state)
 #st.plotly_chart(bar_chart)
 
