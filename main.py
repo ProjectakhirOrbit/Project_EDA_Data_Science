@@ -6,6 +6,8 @@ import numpy as np
 from turtle import width
 from PIL import Image
 import plotly.express as px
+import plotly.graph_objects as go
+import seaborn as sns
 
 # Membangun aplikasi dashboard
 # image = Image.open("Health.jpeg")
@@ -26,43 +28,45 @@ df = load_data()
 state_select = st.sidebar.selectbox('Select a Country', df['Entity'].unique())
 selected_state = df[df['Entity'] == state_select]
 
-
 column_names = ["Entity","Code","Year","Causes name","Causes Full Description","Death Numbers"]
 
 selected_state = selected_state.reindex(columns=column_names)
 
 st.title('analisis Penyebab Kematian di dunia')
-st.write(selected_state)
-col1, col2 , col3 = st.columns(3)
 
-with col1:
-    st.write(selected_state['Entity'])
+fig = px.bar(selected_state, x='Year', y='Death Numbers',
+             hover_data=['Code', 'Causes Full Description'], color='Causes name',
+             labels={'Death Numbers':'Total Death'}, height=400 , width=1200)
+st.plotly_chart(fig)
 
-with col2:
-    st.write(selected_state['Causes Full Description'])
-with col3:
-    st.write(selected_state['Year'])
+Cause_select = st.selectbox('Pilih Penyebab' , selected_state['Causes name'].sort_values(ascending=True).unique())
+selected_cause = selected_state[selected_state['Causes name'] == Cause_select]
 
-bar_graph_Cause = px.bar(selected_state, x='Causes name', y='Death Numbers'.format(int),color='Causes name', width=1000, height=600)
-st.plotly_chart(bar_graph_Cause)
+fig2 = px.bar(selected_cause, x='Causes name', y='Death Numbers',
+             hover_data=['Code', 'Death Numbers'],color='Causes name',
+             labels={'Death Numbers':'Total Death'}, height=400 , width=400)
+st.plotly_chart(fig2)
 
-def test_asc():
-    visualization1 = df['Year'].sort_values(ascending=True)
-    visualization2 = list(set(visualization1))
-    visualization3 = st.selectbox('Select Year ' , visualization2)
-    return visualization3
 
-visualization3 = test_asc()
-selected_year = df[df['Year'] == visualization3]
-st.markdown('Scatter plot Jumlah Kematian yang disebabkan oleh penyakit berdasarkan tahun ke tahun')
-st.markdown(visualization3)
-scatter_graph_year = px.scatter(selected_year,x='Causes name', y='Death Numbers' , color='Causes name', width=1000, height=600)
+year_select = st.selectbox('Select Year' , selected_cause['Year'].sort_values(ascending=True).unique())
+selected_year = selected_state[selected_state['Year'] == year_select]
 
-scatter_graph_year.update_traces(marker=dict(size=10,
-                              line=dict(width=2,
-                                        color='DarkSlateGrey')),
-                  selector=dict(mode='markers'))
-st.plotly_chart(scatter_graph_year)
+fig3 = px.bar(selected_year, x='Year', y='Death Numbers',
+             hover_data=['Code', 'Death Numbers'],color='Causes name',
+             labels={'Death Numbers':'Total Death by diseases & accidents'}, height=400, width=650)
+st.plotly_chart(fig3)
+
+df3 = selected_cause.replace(np.nan,0)
+
+fig4 = px.line(df3,x='Year' , y='Death Numbers')
+st.plotly_chart(fig4)
+
+
+
+
+
+
+
 
 
 
