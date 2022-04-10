@@ -20,7 +20,7 @@ Analisis Dashboard Penyebab Kematian Di Dunia ☠️
 # Import Dataset
 @st.cache
 def load_data():
-    df = pd.read_csv("Death_causes.csv")
+    df = pd.read_csv("cd.csv")
     return df
 
 df = load_data()
@@ -42,24 +42,29 @@ st.plotly_chart(fig)
 Cause_select = st.selectbox('Pilih Penyebab' , selected_state['Causes name'].sort_values(ascending=True).unique())
 selected_cause = selected_state[selected_state['Causes name'] == Cause_select]
 
-fig2 = px.bar(selected_cause, x='Causes name', y='Death Numbers',
-             hover_data=['Code', 'Death Numbers'],color='Causes name',
+df4 = selected_cause.sort_values(by=['Year'])
+
+df5 = df4.replace(np.nan,0)
+
+fig4 = px.line(df5,x='Year' , y='Death Numbers')
+st.plotly_chart(fig4)
+
+#Menambahkan Title Sum dari Total kematian akibat penyebab 
+fig2 = px.bar(df5, x='Causes name', y='Death Numbers',
+             hover_data=['Code', 'Death Numbers','Year'],color='Causes name',
              labels={'Death Numbers':'Total Death'}, height=400 , width=400)
 st.plotly_chart(fig2)
 
-
 year_select = st.selectbox('Select Year' , selected_cause['Year'].sort_values(ascending=True).unique())
 selected_year = selected_state[selected_state['Year'] == year_select]
+
 
 fig3 = px.bar(selected_year, x='Year', y='Death Numbers',
              hover_data=['Code', 'Death Numbers'],color='Causes name',
              labels={'Death Numbers':'Total Death by diseases & accidents'}, height=400, width=650)
 st.plotly_chart(fig3)
 
-df3 = selected_cause.replace(np.nan,0)
 
-fig4 = px.line(df3,x='Year' , y='Death Numbers')
-st.plotly_chart(fig4)
 
 
 
