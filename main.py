@@ -9,6 +9,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 import seaborn as sns
 
+
 # Membangun aplikasi dashboard
 # image = Image.open("Health.jpeg")
 #st.image(image, width=500)
@@ -35,8 +36,8 @@ selected_state = selected_state.reindex(columns=column_names)
 st.title('analisis Penyebab Kematian di dunia')
 
 fig = px.bar(selected_state, x='Year', y='Death Numbers',
-             hover_data=['Code', 'Causes Full Description'], color='Causes name',
-             labels={'Death Numbers':'Total Death'}, height=400 , width=1200)
+            hover_data=['Code', 'Causes Full Description'], color='Causes name',
+            labels={'Death Numbers':'Total Death'}, height=400 , width=1200)
 st.plotly_chart(fig)
 
 Cause_select = st.selectbox('Pilih Penyebab' , selected_state['Causes name'].sort_values(ascending=True).unique())
@@ -50,14 +51,18 @@ fig4 = px.line(df5,x='Year' , y='Death Numbers')
 st.plotly_chart(fig4)
 
 #Menambahkan Title Sum dari Total kematian akibat penyebab 
+st.markdown('test')
 fig2 = px.bar(df5, x='Causes name', y='Death Numbers',
              hover_data=['Code', 'Death Numbers','Year'],color='Causes name',
              labels={'Death Numbers':'Total Death'}, height=400 , width=400)
 st.plotly_chart(fig2)
 
+st.markdown("total deaths")
+df8=df5.pivot_table(index=['Causes name'],values=['Death Numbers'],aggfunc=sum).iloc[[0],[0]].values
+st.write(int(df8))
+
 year_select = st.selectbox('Select Year' , selected_cause['Year'].sort_values(ascending=True).unique())
 selected_year = selected_state[selected_state['Year'] == year_select]
-
 
 fig3 = px.bar(selected_year, x='Year', y='Death Numbers',
              hover_data=['Code', 'Death Numbers'],color='Causes name',
