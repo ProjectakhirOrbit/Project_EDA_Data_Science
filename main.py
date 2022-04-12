@@ -1,4 +1,5 @@
 #import Libraries yang diperlukan
+from tokenize import String
 from matplotlib.pyplot import text
 import streamlit as st
 import pandas as pd
@@ -51,15 +52,13 @@ fig4 = px.line(df5,x='Year' , y='Death Numbers')
 st.plotly_chart(fig4)
 
 #Menambahkan Title Sum dari Total kematian akibat penyebab 
-st.markdown('test')
 fig2 = px.bar(df5, x='Causes name', y='Death Numbers',
              hover_data=['Code', 'Death Numbers','Year'],color='Causes name',
              labels={'Death Numbers':'Total Death'}, height=400 , width=400)
 st.plotly_chart(fig2)
 
-st.markdown("total deaths")
 df8=df5.pivot_table(index=['Causes name'],values=['Death Numbers'],aggfunc=sum).iloc[[0],[0]].values
-st.write(int(df8))
+st.write(f"Total deaths Caused by {Cause_select} From 1990 - 2019 : " , str(int(df8)))
 
 year_select = st.selectbox('Select Year' , selected_cause['Year'].sort_values(ascending=True).unique())
 selected_year = selected_state[selected_state['Year'] == year_select]
@@ -69,6 +68,8 @@ fig3 = px.bar(selected_year, x='Year', y='Death Numbers',
              labels={'Death Numbers':'Total Death by diseases & accidents'}, height=400, width=650)
 st.plotly_chart(fig3)
 
+df9=selected_year.pivot_table(index=['Year'],values=['Death Numbers'],aggfunc=sum).iloc[[0],[0]].values
+st.write(f"Total deaths in {state_select} in Year {year_select}: " , str(int(df9)))
 
 
 
