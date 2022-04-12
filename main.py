@@ -27,58 +27,44 @@ def load_data():
 
 df = load_data()
 
+#VARIABEL
+
+visualization = st.sidebar.selectbox('Select a Chart type',('Model_1', 'Model_2', 'Model_3', 'Model_4'))
 state_select = st.sidebar.selectbox('Select a Country', df['Entity'].unique())
 selected_state = df[df['Entity'] == state_select]
-
-column_names = ["Entity","Code","Year","Causes name","Causes Full Description","Death Numbers"]
-
-selected_state = selected_state.reindex(columns=column_names)
-
-st.title('analisis Penyebab Kematian di dunia')
-
-fig = px.bar(selected_state, x='Year', y='Death Numbers',
-            hover_data=['Code', 'Causes Full Description'], color='Causes name',
-            labels={'Death Numbers':'Total Death'}, height=400 , width=1200)
-st.plotly_chart(fig)
-
-Cause_select = st.selectbox('Pilih Penyebab' , selected_state['Causes name'].sort_values(ascending=True).unique())
+Cause_select = st.sidebar.selectbox('Pilih Penyebab' , selected_state['Causes name'].sort_values(ascending=True).unique())
 selected_cause = selected_state[selected_state['Causes name'] == Cause_select]
-
-df4 = selected_cause.sort_values(by=['Year'])
-
-df5 = df4.replace(np.nan,0)
-
-fig4 = px.line(df5,x='Year' , y='Death Numbers')
-st.plotly_chart(fig4)
-
-#Menambahkan Title Sum dari Total kematian akibat penyebab 
-fig2 = px.bar(df5, x='Causes name', y='Death Numbers',
-             hover_data=['Code', 'Death Numbers','Year'],color='Causes name',
-             labels={'Death Numbers':'Total Death'}, height=400 , width=400)
-st.plotly_chart(fig2)
-
-df8=df5.pivot_table(index=['Causes name'],values=['Death Numbers'],aggfunc=sum).iloc[[0],[0]].values
-st.write(f"Total deaths Caused by {Cause_select} From 1990 - 2019 : " , str(int(df8)))
-
-year_select = st.selectbox('Select Year' , selected_cause['Year'].sort_values(ascending=True).unique())
+year_select = st.sidebar.selectbox('Select Year' , selected_cause['Year'].sort_values(ascending=True).unique())
 selected_year = selected_state[selected_state['Year'] == year_select]
 
+fig1 = px.bar(selected_state, x='Year', y='Death Numbers',
+        hover_data=['Code', 'Causes Full Description'], color='Causes name',
+        labels={'Death Numbers':'Total Death'}, height=400 , width=1200)
+df1 = selected_cause.sort_values(by=['Year'])
+df2 = df1.replace(np.nan,0)
+fig2 = px.bar(df2, x='Causes name', y='Death Numbers',
+            hover_data=['Code', 'Death Numbers','Year'],color='Causes name',
+            labels={'Death Numbers':'Total Death'}, height=400 , width=400)
+df3=df2.pivot_table(index=['Causes name'],values=['Death Numbers'],aggfunc=sum).iloc[[0],[0]].values
 fig3 = px.bar(selected_year, x='Year', y='Death Numbers',
-             hover_data=['Code', 'Death Numbers'],color='Causes name',
-             labels={'Death Numbers':'Total Death by diseases & accidents'}, height=400, width=650)
-st.plotly_chart(fig3)
+            hover_data=['Code', 'Death Numbers'],color='Causes name',
+            labels={'Death Numbers':'Total Death by diseases & accidents'}, height=400, width=650)
+df4=selected_year.pivot_table(index=['Year'],values=['Death Numbers'],aggfunc=sum).iloc[[0],[0]].values
+fig4 = px.line(df2,x='Year' , y='Death Numbers')
 
-df9=selected_year.pivot_table(index=['Year'],values=['Death Numbers'],aggfunc=sum).iloc[[0],[0]].values
-st.write(f"Total deaths in {state_select} in Year {year_select}: " , str(int(df9)))
+#VARIABEL
 
-
-
-
-
+column_names = ["Entity","Code","Year","Causes name","Causes Full Description","Death Numbers"]
+selected_state = selected_state.reindex(columns=column_names)
 
 
-
-
-
-
-
+if visualization == 'Model_1':
+    st.plotly_chart(fig1)
+elif visualization == 'Model_2':
+    st.plotly_chart(fig2)
+    st.write(f"Total deaths Caused by {Cause_select} From 1990 - 2019 : " , str(int(df3)))
+elif visualization == 'Model_3':
+    st.plotly_chart(fig3)
+    st.write(f"Total deaths in {state_select} in Year {year_select}: " , str(int(df4)))
+elif visualization == 'Model_4':
+    st.plotly_chart(fig4)
