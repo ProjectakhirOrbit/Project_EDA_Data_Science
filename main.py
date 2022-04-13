@@ -34,12 +34,13 @@ column_names = ["Entity","Code","Year","Causes name","Causes Full Description","
 
 selected_state = selected_state.reindex(columns=column_names)
 
-st.title('analisis Penyebab Kematian di dunia')
-
 fig = px.bar(selected_state, x='Year', y='Death Numbers',
             hover_data=['Code', 'Causes Full Description'], color='Causes name',
             labels={'Death Numbers':'Total Death'}, height=400 , width=1200)
 st.plotly_chart(fig)
+
+scatter_fig = px.scatter(selected_state, x='Year' ,  y='Death Numbers', hover_data=['Code', 'Causes Full Description'], color='Causes name', height=400 , width=1200) 
+st.plotly_chart(scatter_fig)
 
 Cause_select = st.selectbox('Pilih Penyebab' , selected_state['Causes name'].sort_values(ascending=True).unique())
 selected_cause = selected_state[selected_state['Causes name'] == Cause_select]
@@ -48,8 +49,11 @@ df4 = selected_cause.sort_values(by=['Year'])
 
 df5 = df4.replace(np.nan,0)
 
-fig4 = px.line(df5,x='Year' , y='Death Numbers')
+fig4 = px.line(df5,x='Year' , y='Death Numbers',title=f"Total Death by {Cause_select}")
 st.plotly_chart(fig4)
+
+fig_scatter = px.scatter(selected_cause, x="Year", y="Death Numbers" , color="Entity" ,hover_data=['Causes name'] )
+st.plotly_chart(fig_scatter)
 
 #Menambahkan Title Sum dari Total kematian akibat penyebab 
 fig2 = px.bar(df5, x='Causes name', y='Death Numbers',
@@ -58,7 +62,7 @@ fig2 = px.bar(df5, x='Causes name', y='Death Numbers',
 st.plotly_chart(fig2)
 
 df8=df5.pivot_table(index=['Causes name'],values=['Death Numbers'],aggfunc=sum).iloc[[0],[0]].values
-st.write(f"Total deaths Caused by {Cause_select} From 1990 - 2019 : " , str(int(df8)))
+st.write(f"Total deaths Caused by {Cause_select} From 1990 - 2019 in {state_select} : " , str(int(df8)))
 
 year_select = st.selectbox('Select Year' , selected_cause['Year'].sort_values(ascending=True).unique())
 selected_year = selected_state[selected_state['Year'] == year_select]
@@ -70,15 +74,3 @@ st.plotly_chart(fig3)
 
 df9=selected_year.pivot_table(index=['Year'],values=['Death Numbers'],aggfunc=sum).iloc[[0],[0]].values
 st.write(f"Total deaths in {state_select} in Year {year_select}: " , str(int(df9)))
-
-
-
-
-
-
-
-
-
-
-
-
