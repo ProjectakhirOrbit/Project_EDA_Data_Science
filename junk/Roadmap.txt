@@ -1,0 +1,5 @@
+Hal - Hal yang mau Dikerjakan untuk Proyek Akhir
+1. Mencari dataset (O)
+2. Memvisualisasikan dataset (O)
+3. Menambahkan Component dalam Aplikasi (-) 
+4. Penentuan Ai yang ingin digunakan (-)
